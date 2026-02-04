@@ -36,18 +36,19 @@ function mockAuthResponse(username: string): RegisterResponse {
 }
 
 // Backend (capstone-be): POST /api/users, body { username, password }
-// Response: { message, newUser } with newUser: { _id, username, ... }
+// Response: { message, newUser }. Backend does not return JWT on register, so we login to get a token.
 export async function register(payload: RegisterPayload): Promise<RegisterResponse> {
   if (USE_MOCK_AUTH) {
     await new Promise((r) => setTimeout(r, 400));
     return mockAuthResponse(payload.username);
   }
-  const { data } = await apiClient.post<BackendRegisterResponse>('/api/users', {
+  await apiClient.post<BackendRegisterResponse>('/api/users', {
     ...(payload.email && { email: payload.email }),
     username: payload.username,
     password: payload.password,
   });
-  return mapBackendUserToAuth(data);
+  // Log in to get JWT for subsequent requests
+  return login({ username: payload.username, password: payload.password });
 }
 
 interface BackendRegisterResponse {
@@ -55,17 +56,15 @@ interface BackendRegisterResponse {
   newUser: { _id: string | { toString(): string }; username: string };
 }
 
-function mapBackendUserToAuth(res: BackendRegisterResponse): RegisterResponse {
-  const id = typeof res.newUser._id === 'string' ? res.newUser._id : res.newUser._id.toString();
-  return {
-    token: id,
-    user: { id, username: res.newUser.username },
-  };
-}
-
 export interface LoginPayload {
   username: string;
   password: string;
+}
+
+// Backend (capstone-be): POST /api/auth/login → { success, data: { token, user: { _id, username } } }
+interface BackendLoginResponse {
+  success: boolean;
+  data: { token: string; user: { _id: string | { toString(): string }; username: string } };
 }
 
 export async function login(payload: LoginPayload): Promise<RegisterResponse> {
@@ -73,6 +72,10 @@ export async function login(payload: LoginPayload): Promise<RegisterResponse> {
     await new Promise((r) => setTimeout(r, 400));
     return mockAuthResponse(payload.username);
   }
-  const { data } = await apiClient.post<RegisterResponse>('/auth/login', payload);
-  return data;
+  const { data } = await apiClient.post<BackendLoginResponse>('/api/auth/login', payload);
+  const id = typeof data.data.user._id === 'string' ? data.data.user._id : data.data.user._id.toString();
+  return {
+    token: data.data.token,
+    user: { id, username: data.data.user.username },
+  };
 }

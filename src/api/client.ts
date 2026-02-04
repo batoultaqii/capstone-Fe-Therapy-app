@@ -3,15 +3,14 @@ import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/src/store/auth-store';
 
 /**
-rr * Backend API base URL (capstone-be).
- * Set EXPO_PUBLIC_API_URL in .env or app config.
+ * Backend API base URL (capstone-be). No trailing slash.
+ * Set EXPO_PUBLIC_API_URL in .env (e.g. .env.local).
  * Examples:
  *   - iOS Simulator: http://localhost:8000
  *   - Android Emulator: http://10.0.2.2:8000
  *   - Physical device (same network): http://YOUR_COMPUTER_IP:8000
  */
-const API_BASE_URL = 'http://localhost:8000/api';
-//const API_BASE_URL = 'http://192.168.15.213:8000';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
