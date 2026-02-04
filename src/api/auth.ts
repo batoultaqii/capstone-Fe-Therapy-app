@@ -11,9 +11,9 @@ export interface RegisterResponse {
 }
 
 export interface RegisterPayload {
+  email?: string;
   username: string;
   password: string;
-  avatarUri?: string | null;
 }
 
 export function getErrorMessage(error: unknown): string {
@@ -43,6 +43,7 @@ export async function register(payload: RegisterPayload): Promise<RegisterRespon
     return mockAuthResponse(payload.username);
   }
   const { data } = await apiClient.post<BackendRegisterResponse>('/api/users', {
+    ...(payload.email && { email: payload.email }),
     username: payload.username,
     password: payload.password,
   });
@@ -72,6 +73,6 @@ export async function login(payload: LoginPayload): Promise<RegisterResponse> {
     await new Promise((r) => setTimeout(r, 400));
     return mockAuthResponse(payload.username);
   }
-  const { data } = await apiClient.post<RegisterResponse>('/login', payload);
+  const { data } = await apiClient.post<RegisterResponse>('/auth/login', payload);
   return data;
 }

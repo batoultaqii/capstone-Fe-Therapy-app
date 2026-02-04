@@ -1,7 +1,5 @@
 import { useAuthStore } from '@/src/store/auth-store';
 import { getErrorMessage, register } from '@/src/api/auth';
-import * as ImagePicker from 'expo-image-picker';
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -14,7 +12,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
 } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -22,13 +19,15 @@ import { ThemedView } from '@/components/themed-view';
 import { DesignSystem } from '@/constants/design-system';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useTranslation } from '@/src/i18n/use-translation';
 
 const { radius, spacing, primaryButton, colors: DSColors, typography } = DesignSystem;
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -39,35 +38,18 @@ export default function RegisterScreen() {
   const textColor = useThemeColor({}, 'text');
   const placeholderColor = c.placeholder;
 
-  const pickAvatar = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Please allow access to your photo library to add a photo.');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-    if (!result.canceled) {
-      setAvatarUri(result.assets[0].uri);
-    }
-  };
-
   const handleSubmit = async () => {
-    if (!username.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in both username and password');
+    if (!email.trim() || !username.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please fill in email, username, and password');
       return;
     }
 
     setLoading(true);
     try {
       const { token, user } = await register({
+        email: email.trim(),
         username: username.trim(),
         password,
-        avatarUri: avatarUri ?? undefined,
       });
       setAuth(token, user);
       router.replace('/(tabs)');
@@ -88,33 +70,30 @@ export default function RegisterScreen() {
         showsVerticalScrollIndicator={false}>
         <ThemedView style={styles.form}>
           <ThemedText type="title" style={styles.title}>
-            Create your account
+            {t('auth.createAccountTitle')}
           </ThemedText>
-
-          <View style={styles.avatarSection}>
-            <Pressable
-              style={[styles.avatarButton, { borderColor: primary }]}
-              onPress={pickAvatar}
-              disabled={loading}>
-              {avatarUri ? (
-                <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
-              ) : (
-                <ThemedText style={styles.avatarPlaceholder}>+</ThemedText>
-              )}
-            </Pressable>
-            <Pressable onPress={pickAvatar} disabled={loading}>
-              <ThemedText type="link" style={[styles.avatarLabel, { color: primary }]}>
-                Add a photo
-              </ThemedText>
-            </Pressable>
-          </View>
 
           <TextInput
             style={[
               styles.input,
               { color: textColor, borderColor: c.textMuted, borderRadius: radius.input },
             ]}
-            placeholder="Username"
+            placeholder={t('auth.email')}
+            placeholderTextColor={placeholderColor}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            editable={!loading}
+          />
+
+          <TextInput
+            style={[
+              styles.input,
+              { color: textColor, borderColor: c.textMuted, borderRadius: radius.input },
+            ]}
+            placeholder={t('auth.username')}
             placeholderTextColor={placeholderColor}
             value={username}
             onChangeText={setUsername}
@@ -128,7 +107,7 @@ export default function RegisterScreen() {
               styles.input,
               { color: textColor, borderColor: c.textMuted, borderRadius: radius.input },
             ]}
-            placeholder="Password"
+            placeholder={t('auth.password')}
             placeholderTextColor={placeholderColor}
             value={password}
             onChangeText={setPassword}
@@ -144,7 +123,7 @@ export default function RegisterScreen() {
             {loading ? (
               <ActivityIndicator color="#0F172A" />
             ) : (
-              <Text style={styles.buttonText}>Create account</Text>
+              <Text style={styles.buttonText}>{t('auth.createAccountButton')}</Text>
             )}
           </Pressable>
         </ThemedView>
@@ -171,32 +150,6 @@ const styles = StyleSheet.create({
     lineHeight: typography.titleLineHeight,
     marginBottom: spacing.xs,
     textAlign: 'center',
-  },
-  avatarSection: {
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginVertical: spacing.sm,
-  },
-  avatarButton: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  avatarImage: {
-    width: '100%',
-    height: '100%',
-  },
-  avatarPlaceholder: {
-    fontSize: 32,
-    opacity: 0.5,
-  },
-  avatarLabel: {
-    fontSize: typography.labelSize,
   },
   input: {
     borderWidth: 1,

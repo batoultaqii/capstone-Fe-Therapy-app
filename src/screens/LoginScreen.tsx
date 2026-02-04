@@ -9,8 +9,10 @@ import { Input } from '@/src/components/Input';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useTranslation } from '@/src/i18n/use-translation';
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,11 +47,11 @@ export default function LoginScreen() {
       style={[styles.container, { backgroundColor }]}>
       <ThemedView style={styles.form}>
         <ThemedText type="title" style={styles.title}>
-          Login
+          {t('auth.loginTitle')}
         </ThemedText>
 
         <Input
-          placeholder="Username"
+          placeholder={t('auth.username')}
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
@@ -58,7 +60,7 @@ export default function LoginScreen() {
         />
 
         <Input
-          placeholder="Password"
+          placeholder={t('auth.password')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -70,14 +72,14 @@ export default function LoginScreen() {
         ) : null}
 
         <Button
-          title="Login"
+          title={t('auth.login')}
           onPress={handleSubmit}
           loading={loading}
         />
 
         <Link href="/register" asChild>
           <Pressable style={styles.registerLink}>
-            <ThemedText type="link">Don't have an account? Register</ThemedText>
+            <ThemedText type="link">{t('auth.noAccountRegister')}</ThemedText>
           </Pressable>
         </Link>
       </ThemedView>
