@@ -59,6 +59,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'enrollment.message': 'Session details and links will be sent to your email.',
     'enrollment.signedUpFor': 'You\'re signed up for "{sessionName}".',
     'enrollment.ok': 'OK',
+    'enrollment.zoomLink': 'https://zoom.us/j/1234567890',
+'enrollment.zoomLinkLabel': 'Join via Zoom',
   },
   ar: {
     // Welcome
@@ -144,6 +146,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'enrollment.message': 'سيتم إرسال تفاصيل الجلسة والروابط إلى بريدك الإلكتروني.',
     'enrollment.signedUpFor': 'أنت مسجّل في "{sessionName}".',
     'enrollment.ok': 'موافق',
+    'enrollment.zoomLink': 'https://zoom.us/j/1234567890',
+    'enrollment.zoomLinkLabel': 'انضم عبر زوم',
   },
 };
 

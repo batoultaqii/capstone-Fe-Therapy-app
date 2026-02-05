@@ -1,8 +1,10 @@
 import { create } from 'zustand';
+import { getSessions as fetchSessionsApi } from '../api/sessions';
 
 /**
  * Support group sessions and enrollment state.
  * Sessions are keyed by id; enrolling updates enrolledCount in memory.
+ * fetchSessions() loads sessions from the backend (fallback to mock on error).
  */
 
 export type SessionFormat = 'Online' | 'In-Person';
@@ -183,6 +185,10 @@ interface SessionsState {
   providers: Provider[];
   enrolledIds: Set<string>;
   lastEnrolledId: string | null;
+  sessionsLoading: boolean;
+  sessionsError: string | null;
+  setSessions: (sessions: SupportSession[]) => void;
+  fetchSessions: () => Promise<void>;
   enroll: (sessionId: string) => boolean;
   clearLastEnrolledId: () => void;
   getSession: (id: string) => SupportSession | undefined;
@@ -194,6 +200,26 @@ export const useSessionsStore = create<SessionsState>((set, get) => ({
   providers: MOCK_PROVIDERS,
   enrolledIds: new Set<string>(),
   lastEnrolledId: null,
+  sessionsLoading: false,
+  sessionsError: null,
+
+  setSessions(sessions: SupportSession[]) {
+    set({ sessions, sessionsError: null });
+  },
+
+  async fetchSessions() {
+    set({ sessionsLoading: true, sessionsError: null });
+    try {
+      const sessions = await fetchSessionsApi();
+      set({ sessions, sessionsLoading: false, sessionsError: null });
+    } catch {
+      set({
+        sessions: MOCK_SESSIONS,
+        sessionsLoading: false,
+        sessionsError: null,
+      });
+    }
+  },
 
   enroll(sessionId: string) {
     const session = get().sessions.find((s) => s.id === sessionId);

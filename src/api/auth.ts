@@ -1,8 +1,6 @@
 import type { User } from '@/src/store/auth-store';
 import { apiClient } from './client';
 
-// Use mock auth when no API URL is set (avoids Network Error) or when EXPO_PUBLIC_USE_MOCK_AUTH=true.
-// Set EXPO_PUBLIC_API_URL to your backend URL to use the real API.
 const USE_MOCK_AUTH = process.env.EXPO_PUBLIC_USE_MOCK_AUTH === 'true';
 
 export interface RegisterResponse {
@@ -14,11 +12,15 @@ export interface RegisterPayload {
   email?: string;
   username: string;
   password: string;
+  avatarId?: string;
 }
 
 export function getErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null) {
-    const err = error as { response?: { data?: { message?: string; error?: string }; status?: number }; message?: string };
+    const err = error as {
+      response?: { data?: { message?: string; error?: string }; status?: number };
+      message?: string;
+    };
     const msg = err.response?.data?.message ?? err.response?.data?.error;
     if (msg) return typeof msg === 'string' ? msg : JSON.stringify(msg);
     if (err.response?.status) return `Request failed (${err.response.status})`;
@@ -35,25 +37,34 @@ function mockAuthResponse(username: string): RegisterResponse {
   };
 }
 
-// Backend (capstone-be): POST /api/users, body { username, password }
-// Response: { message, newUser }. Backend does not return JWT on register, so we login to get a token.
+// Backend: POST /users with optional avatarId → { success, data: { token, user } }
 export async function register(payload: RegisterPayload): Promise<RegisterResponse> {
   if (USE_MOCK_AUTH) {
     await new Promise((r) => setTimeout(r, 400));
     return mockAuthResponse(payload.username);
   }
-  await apiClient.post<BackendRegisterResponse>('/api/users', {
-    ...(payload.email && { email: payload.email }),
-    username: payload.username,
-    password: payload.password,
-  });
-  // Log in to get JWT for subsequent requests
-  return login({ username: payload.username, password: payload.password });
+  const { data } = await apiClient.post<BackendRegisterResponseNew>(
+    '/users',
+    {
+      ...(payload.email && { email: payload.email }),
+      username: payload.username,
+      password: payload.password,
+      ...(payload.avatarId !== undefined &&
+        payload.avatarId !== '' && { avatarId: payload.avatarId }),
+    }
+  );
+  return mapBackendRegisterToAuth(data);
 }
 
-interface BackendRegisterResponse {
-  message: string;
-  newUser: { _id: string | { toString(): string }; username: string };
+interface BackendRegisterResponseNew {
+  success: true;
+  data: { token: string; user: { _id: string | { toString(): string }; username: string } };
+}
+
+function mapBackendRegisterToAuth(res: BackendRegisterResponseNew): RegisterResponse {
+  const u = res.data.user;
+  const id = typeof u._id === 'string' ? u._id : u._id.toString();
+  return { token: res.data.token, user: { id, username: u.username } };
 }
 
 export interface LoginPayload {
@@ -61,10 +72,10 @@ export interface LoginPayload {
   password: string;
 }
 
-// Backend (capstone-be): POST /api/auth/login → { success, data: { token, user: { _id, username } } }
+// Backend: POST /auth/login → { success, data: { token, user } }
 interface BackendLoginResponse {
   success: boolean;
-  data: { token: string; user: { _id: string | { toString(): string }; username: string } };
+  data: { token: string; user: { _id: string | { toString(): string }; username: string; avatarId?: string } };
 }
 
 export async function login(payload: LoginPayload): Promise<RegisterResponse> {
@@ -72,10 +83,31 @@ export async function login(payload: LoginPayload): Promise<RegisterResponse> {
     await new Promise((r) => setTimeout(r, 400));
     return mockAuthResponse(payload.username);
   }
-  const { data } = await apiClient.post<BackendLoginResponse>('/api/auth/login', payload);
-  const id = typeof data.data.user._id === 'string' ? data.data.user._id : data.data.user._id.toString();
+  const { data } = await apiClient.post<BackendLoginResponse>('/auth/login', payload);
+  const u = data.data.user;
+  const id = typeof u._id === 'string' ? u._id : u._id.toString();
   return {
     token: data.data.token,
-    user: { id, username: data.data.user.username },
+    user: {
+      id,
+      username: u.username,
+      ...(typeof u.avatarId === 'string' && { avatarId: u.avatarId }),
+    },
   };
+}
+// نوع الاستجابة من الباكند
+export interface ProfileData {
+  _id: string;
+  username: string;
+  avatarId: string;
+}
+
+export async function getProfile(): Promise<ProfileData | null> {
+  try {
+    const { data } = await apiClient.get<{ success: boolean; data: ProfileData }>("/users/me");
+    if (data?.success && data?.data) return data.data;
+    return null;
+  } catch {
+    return null;
+  }
 }
