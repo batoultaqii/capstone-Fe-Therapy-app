@@ -14,7 +14,8 @@ export const Colors = {
     tint: colors.light.primary,
     icon: colors.light.textMuted,
     tabIconDefault: colors.light.textMuted,
-    tabIconSelected: colors.light.primary,
+    tabIconSelected: colors.light.primaryDark,
+    tabActiveBackground: colors.light.mint,
   },
   dark: {
     text: colors.dark.text,
@@ -23,6 +24,7 @@ export const Colors = {
     icon: colors.dark.textMuted,
     tabIconDefault: colors.dark.textMuted,
     tabIconSelected: colors.dark.primary,
+    tabActiveBackground: colors.dark.mint,
   },
 };
 

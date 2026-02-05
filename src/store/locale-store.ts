@@ -1,5 +1,5 @@
 /**
- * Locale (language) state and persistence for Togetherness.
+ * Locale (language) state and persistence for iBelong.
  * Supports English (LTR) and Arabic (RTL). Persists to AsyncStorage and applies RTL on change.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';

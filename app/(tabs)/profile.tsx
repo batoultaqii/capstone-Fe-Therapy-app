@@ -71,6 +71,10 @@ export default function ProfileScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+      {/* Mint accent band at top (reference design) */}
+      <View
+        style={[styles.profileMintAccent, { backgroundColor: colors.mint }]}
+      />
       <Animated.View
         entering={FadeInDown.duration(400)}
         style={[
@@ -292,6 +296,12 @@ export default function ProfileScreen() {
         onPress={handleSignOut}
         accessibilityLabel={t("profile.signOut")}
       >
+        <MaterialIcons
+          name="logout"
+          size={22}
+          color={colors.textMuted}
+          style={styles.signOutIcon}
+        />
         <ThemedText style={[styles.signOutLabel, { color: colors.textMuted }]}>
           {t("profile.signOut")}
         </ThemedText>
@@ -303,6 +313,15 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
+  profileMintAccent: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
   card: {
     padding: spacing.md,
     borderRadius: radius.card,
@@ -338,11 +357,14 @@ const styles = StyleSheet.create({
   sessionRow: { fontSize: 14, marginTop: 4 },
   signOut: {
     marginTop: spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 14,
     borderRadius: 999,
     borderWidth: 1,
-    alignItems: "center",
   },
+  signOutIcon: { marginRight: 8 },
   signOutLabel: { fontSize: 15 },
   languageRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
   languageChip: {

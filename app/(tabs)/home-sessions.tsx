@@ -96,7 +96,9 @@ function SessionCard({
 }: {
   session: SupportSession;
   onPress: () => void;
-  colors: (typeof DesignSystem.colors)["light"];
+  colors:
+    | (typeof DesignSystem.colors)["light"]
+    | (typeof DesignSystem.colors)["dark"];
   isJustEnrolled: boolean;
   enrolledLabel: string;
   languageLabel: string;
@@ -226,7 +228,12 @@ export default function HomeSessionsScreen() {
           style={[
             styles.hero,
             styles.heroShape,
-            { backgroundColor: colors.mint + "40" },
+            {
+              backgroundColor: colors.mint + "40",
+              borderLeftColor:
+                (colors as { primaryDark?: string; primary: string })
+                  .primaryDark ?? (colors as { primary: string }).primary,
+            },
           ]}
         >
           <ThemedText

@@ -1,27 +1,42 @@
 /**
- * Unified visual system for Togetherness — warm, human, reassuring.
- * Warm teal/sage/mint, cream backgrounds, soft depth. Support, not performance.
+ * Unified visual system for iBelong — clean, modern, supportive.
+ * Muted green accents, light backgrounds, soft depth. Matches reference design.
  */
 
 export const DesignSystem = {
-  // Warm palette: teal/sage/mint, cream off-white. No pure white or harsh grays.
+  // iBelong palette: muted green, light grey/white, soft card tints.
   colors: {
     light: {
-      primary: '#2BA99B',           // warm teal — CTAs, accents
+      primary: '#7EAC7E',           // earthy green — CTAs, active tab
+      primaryDark: '#2E473D',       // dark green — headings, emphasis
       secondary: '#A7C4B5',         // soft sage — highlights
-      mint: '#B8E0D8',              // soft mint — subtle fills
-      background: '#F5F3F0',        // cream / warm off-white
-      surface: '#FDFCFA',           // cards — warm white
-      surfaceElevated: '#FFFFFF',   // slightly brighter for elevation
-      text: '#2C2A26',
-      textMuted: '#6B6560',
+      mint: '#E8F5E9',              // light mint — tab active bg, profile accent
+      background: '#F8F8F8',        // light grey background
+      surface: '#FFFFFF',           // cards — white
+      surfaceElevated: '#FFFFFF',   // elevated surfaces
+      text: '#333333',
+      textMuted: '#666666',
       placeholder: '#9C9590',
-      streakGold: '#C9A227',        // soft gold for streak badge
-      border: 'rgba(43, 169, 155, 0.12)',
+      streakGold: '#FCE08F',        // star / points accent
+      // Home card tints
+      streakBg: '#FEE8ED',
+      streakCircle: '#F9D3D8',
+      pointsBg: '#FFF8DD',
+      pointsCircle: '#FCE08F',
+      therabotBg: '#E8EBFD',
+      therabotIcon: '#4266D0',
+      // Profile / chart
+      chartPink: '#F2DCE5',
+      chartGreen: '#A9D1A9',
+      // Secondary button
+      buttonSecondary: '#F0F0F0',
+      border: 'rgba(46, 71, 61, 0.12)',
+      borderLight: '#E0E0E0',
       shadow: 'rgba(0, 0, 0, 0.06)',
     },
     dark: {
-      primary: '#5EEAD4',
+      primary: '#7EAC7E',
+      primaryDark: '#5EEAD4',
       secondary: '#7A9A8A',
       mint: '#2D4A44',
       background: '#1A2424',
@@ -30,41 +45,50 @@ export const DesignSystem = {
       text: '#F3F4F6',
       textMuted: '#9CA3AF',
       placeholder: '#6B7280',
-      streakGold: '#E5C65C',
+      streakGold: '#FCE08F',
+      streakBg: '#3D2A2E',
+      streakCircle: '#5C3A40',
+      pointsBg: '#3D3A2A',
+      pointsCircle: '#5C5430',
+      therabotBg: '#2A2A3D',
+      therabotIcon: '#7B8FD4',
+      chartPink: '#5C4A52',
+      chartGreen: '#3D5C3D',
+      buttonSecondary: '#3D3D3D',
       border: 'rgba(94, 234, 212, 0.15)',
+      borderLight: '#3D3D3D',
       shadow: 'rgba(0, 0, 0, 0.3)',
     },
   },
 
-  // Gentle rounded — friendly, not sharp
+  // Rounded corners — 12–16px per reference
   radius: {
-    input: 16,
-    card: 20,
-    tile: 20,
+    input: 14,
+    card: 14,
+    tile: 14,
     pill: 999,
     avatar: 999,
     chip: 12,
   },
 
-  // Soft depth — cards elevated, calm
+  // Soft depth — light shadow for cards
   shadow: {
     card: {
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.06,
-      shadowRadius: 12,
-      elevation: 3,
+      shadowOpacity: 0.05,
+      shadowRadius: 8,
+      elevation: 2,
     },
     cardWarm: {
-      shadowColor: '#2BA99B',
+      shadowColor: '#2E473D',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 14,
-      elevation: 3,
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 2,
     },
   },
 
-  // Spacing rhythm — same on Home and Register
   spacing: {
     xs: 8,
     sm: 12,
@@ -74,7 +98,6 @@ export const DesignSystem = {
     xxl: 48,
   },
 
-  // Typography scale
   typography: {
     titleSize: 26,
     titleLineHeight: 34,
@@ -85,16 +108,15 @@ export const DesignSystem = {
     buttonSize: 18,
   },
 
-  // Primary button (Breathe / Register) — same everywhere
   primaryButton: {
     paddingVertical: 18,
     paddingHorizontal: 40,
     minWidth: 168,
     borderRadius: 999,
-    shadowColor: '#2DD4BF',
+    shadowColor: '#7EAC7E',
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 16,
-    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOpacity: 0.2,
     elevation: 4,
   },
 } as const;

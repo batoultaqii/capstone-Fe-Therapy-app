@@ -1,5 +1,5 @@
 /**
- * Togetherness — English and Arabic copy.
+ * iBelong — English and Arabic copy.
  * Arabic: human, gentle, culturally appropriate (Kuwait / Arab region).
  */
 
@@ -7,6 +7,7 @@ export type Locale = 'en' | 'ar';
 
 export const translations: Record<Locale, Record<string, string>> = {
   en: {
+    'app.name': 'iBelong',
     // Welcome
     'welcome.headline': "You're welcome here",
     'welcome.supporting': "Connect when you're ready. A calm space to be with others.",
@@ -18,6 +19,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'welcome.language.arabic': 'العربية',
     'welcome.language.hint': 'You can change this later in Profile.',
     'welcome.language.aria': 'Switch language',
+
+    // Tabs
+    'tabs.home': 'Home',
+    'tabs.providers': 'Therapists',
+    'tabs.profile': 'Profile',
 
     // Auth
     'auth.login': 'Sign in',
@@ -50,6 +56,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'session.language.bilingual': 'Bilingual',
 
     // Providers (card & detail labels)
+    'providers.title': 'Find Support',
+    'providers.subtitle': 'Connect with certified professionals who care.',
     'providers.volunteerCoHost': 'Volunteer co-host',
     'providers.bio': 'Bio',
     'providers.sessionsTheyHost': 'Sessions they host',
@@ -60,9 +68,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     'enrollment.signedUpFor': 'You\'re signed up for "{sessionName}".',
     'enrollment.ok': 'OK',
     'enrollment.zoomLink': 'https://zoom.us/j/1234567890',
-'enrollment.zoomLinkLabel': 'Join via Zoom',
+    'enrollment.zoomLinkLabel': 'Join via Zoom',
   },
   ar: {
+    'app.name': 'iBelong',
     // Welcome
     'welcome.headline': 'أهلاً بك هنا',
     'welcome.supporting': 'تواصل عندما تكون جاهزاً. مساحة هادئة لتكون مع الآخرين.',

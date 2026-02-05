@@ -1,5 +1,5 @@
 /**
- * useTranslation — locale and t() for Togetherness.
+ * useTranslation — locale and t() for iBelong.
  */
 import { useLocaleStore } from '@/src/store/locale-store';
 import { useMemo } from 'react';
